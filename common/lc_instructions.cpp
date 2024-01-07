@@ -30,10 +30,12 @@ lcInstructions::lcInstructions(Project* Project)
 	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLIFont)].Value = QFont("Arial", 16, QFont::Bold).toString();
 	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLITextColor)].Value = LC_RGBA(0, 0, 0, 255);
 	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLIBorderColor)].Value = LC_RGBA(0, 0, 0, 255);
+	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLIWidth)].Value = 300;
+	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLIMaxPartWidth)].Value = 512;
 //	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLIBorderWidth)].Value = 2.0f;
 //	mStepProperties[static_cast<int>(lcInstructionsPropertyType::PLIBorderRound)].Value = true;
 
-	static_assert(static_cast<int>(lcInstructionsPropertyType::Count) == 9, "Missing default property");
+	static_assert(static_cast<int>(lcInstructionsPropertyType::Count) == 11, "Missing default property");
 
 	CreatePages();
 }
@@ -60,6 +62,10 @@ QString lcInstructions::GetPropertyLabel(lcInstructionsPropertyType Type)
 			return tr("Text Color:");
 		case lcInstructionsPropertyType::PLIBorderColor:
 			return tr("Border Color:");
+		case lcInstructionsPropertyType::PLIWidth:
+			return tr("Partlist width:");
+		case lcInstructionsPropertyType::PLIMaxPartWidth:
+			return tr("Max. part width:");
 		case lcInstructionsPropertyType::Count:
 			break;
 	}
@@ -92,6 +98,12 @@ QFont lcInstructions::GetFontProperty(lcInstructionsPropertyType Type, lcModel* 
 	QFont Font;
 	Font.fromString(Value.toString());
 	return Font;
+}
+
+int lcInstructions::GetIntegerProperty(lcInstructionsPropertyType Type, lcModel* Model, lcStep Step) const
+{
+	QVariant Value = GetProperty(Type, Model, Step);
+	return Value.toUInt();
 }
 
 QVariant lcInstructions::GetProperty(lcInstructionsPropertyType Type, lcModel* Model, lcStep Step) const
@@ -132,6 +144,11 @@ void lcInstructions::SetDefaultColor(lcInstructionsPropertyType Type, const QCol
 void lcInstructions::SetDefaultFont(lcInstructionsPropertyType Type, const QFont& Font)
 {
 	SetDefaultProperty(Type, Font.toString());
+}
+
+void lcInstructions::SetDefaultInteger(lcInstructionsPropertyType Type, int Value)
+{
+	SetDefaultProperty(Type, Value);
 }
 
 void lcInstructions::SetDefaultProperty(lcInstructionsPropertyType Type, const QVariant& Value)

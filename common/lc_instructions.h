@@ -45,6 +45,8 @@ enum class lcInstructionsPropertyType
 	PLIFont,
 	PLITextColor,
 	PLIBorderColor,
+	PLIWidth,
+	PLIMaxPartWidth,
 //	PLIBorderWidth,
 //	PLIBorderRound,
 	// pli: spacing and margins, text alignment
@@ -93,10 +95,12 @@ public:
 	bool GetBoolProperty(lcInstructionsPropertyType Type, lcModel* Model, lcStep Step) const;
 	QColor GetColorProperty(lcInstructionsPropertyType Type, lcModel* Model, lcStep Step) const;
 	QFont GetFontProperty(lcInstructionsPropertyType Type, lcModel* Model, lcStep Step) const;
+	int GetIntegerProperty(lcInstructionsPropertyType Type, lcModel* Model, lcStep Step) const;
 
 	void SetDefaultBool(lcInstructionsPropertyType Type, bool Enabled);
 	void SetDefaultColor(lcInstructionsPropertyType Type, const QColor& Color);
 	void SetDefaultFont(lcInstructionsPropertyType Type, const QFont& Font);
+	void SetDefaultInteger(lcInstructionsPropertyType Type, int Value);
 
 //protected:
 	std::vector<lcInstructionsPage> mPages;

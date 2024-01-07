@@ -1387,7 +1387,7 @@ QImage lcModel::GetStepImage(bool Zoom, int Width, int Height, lcStep Step)
 	return Image;
 }
 
-QImage lcModel::GetPartsListImage(int MaxWidth, lcStep Step, quint32 BackgroundColor, QFont Font, QColor TextColor) const
+QImage lcModel::GetPartsListImage(int MaxWidth, lcStep Step, quint32 BackgroundColor, QFont Font, QColor TextColor, int MaxPartWidth) const
 {
 	lcPartsList PartsList;
 
@@ -1437,7 +1437,8 @@ QImage lcModel::GetPartsListImage(int MaxWidth, lcStep Step, quint32 BackgroundC
 	View.SetOffscreenContext();
 	View.MakeCurrent();
 	lcContext* Context = View.mContext;
-	const int ThumbnailSize = qMin(MaxWidth, 512);
+
+	const int ThumbnailSize = qMin(MaxWidth, MaxPartWidth);
 
 	View.SetSize(ThumbnailSize, ThumbnailSize);
 

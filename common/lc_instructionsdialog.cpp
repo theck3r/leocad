@@ -1,4 +1,5 @@
 #include "lc_global.h"
+#include "lc_instructions.h"
 #include "lc_instructionsdialog.h"
 #include "lc_pagesetupdialog.h"
 #include "project.h"
@@ -62,8 +63,10 @@ void lcInstructionsPartsListItem::Update()
 	QColor BackgroundColor = mInstructions->GetColorProperty(lcInstructionsPropertyType::PLIBackgroundColor, mModel, mStep);
 	QFont Font = mInstructions->GetFontProperty(lcInstructionsPropertyType::PLIFont, mModel, mStep);
 	QColor TextColor = mInstructions->GetColorProperty(lcInstructionsPropertyType::PLITextColor, mModel, mStep);
+	int PLIWidth = mInstructions->GetIntegerProperty(lcInstructionsPropertyType::PLIWidth, mModel, mStep);
+	int MaxPartWidth = mInstructions->GetIntegerProperty(lcInstructionsPropertyType::PLIMaxPartWidth, mModel, mStep);
 
-	QImage PartsImage = mModel->GetPartsListImage(300, mStep, lcRGBAFromQColor(BackgroundColor), Font, TextColor);
+	QImage PartsImage = mModel->GetPartsListImage(PLIWidth, mStep, lcRGBAFromQColor(BackgroundColor), Font, TextColor, MaxPartWidth);
 	setPixmap(QPixmap::fromImage(PartsImage));
 }
 
@@ -306,7 +309,7 @@ lcInstructionsPropertiesWidget::lcInstructionsPropertiesWidget(QWidget* Parent, 
 	Layout->addWidget(new QLabel(tr("Preset:")), 1, 0);
 	Layout->addWidget(PresetComboBox, 1, 1);
 
-	Layout->setRowStretch(3, 1);
+	Layout->setRowStretch(4, 1);
 }
 
 void lcInstructionsPropertiesWidget::AddBoolProperty(lcInstructionsPropertyType Type)
@@ -323,6 +326,25 @@ void lcInstructionsPropertiesWidget::AddBoolProperty(lcInstructionsPropertyType 
 	connect(CheckBox, &QToolButton::toggled, [this, Type](bool Checked)
 	{
 		mInstructions->SetDefaultBool(Type, Checked);
+	} );
+}
+
+void lcInstructionsPropertiesWidget::AddIntegerProperty(lcInstructionsPropertyType Type, int Min, int Max)
+{
+	const QString Label = mInstructions->GetPropertyLabel(Type);
+	const int Row = mPropertiesLayout->rowCount();
+
+	mPropertiesLayout->addWidget(new QLabel(Label), Row, 0);
+
+	QSpinBox* SpinBox = new QSpinBox();
+	mPropertiesLayout->addWidget(SpinBox, Row, 1);
+
+	int Value = mInstructions->GetIntegerProperty(Type, mModel, mStep);
+	SpinBox->setRange(Min, Max);
+	SpinBox->setValue(Value);
+
+	connect(SpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this, Type](int i){ 
+		mInstructions->SetDefaultInteger(Type, i);
 	} );
 }
 
@@ -376,6 +398,8 @@ void lcInstructionsPropertiesWidget::AddColorProperty(lcInstructionsPropertyType
 			case lcInstructionsPropertyType::ShowStepPLI:
 			case lcInstructionsPropertyType::StepNumberFont:
 			case lcInstructionsPropertyType::PLIFont:
+			case lcInstructionsPropertyType::PLIWidth:
+			case lcInstructionsPropertyType::PLIMaxPartWidth:
 //			case lcInstructionsPropertyType::StepPLIBorderWidth:
 //			case lcInstructionsPropertyType::StepPLIBorderRound:
 			case lcInstructionsPropertyType::Count:
@@ -433,6 +457,8 @@ void lcInstructionsPropertiesWidget::AddFontProperty(lcInstructionsPropertyType 
 			case lcInstructionsPropertyType::PLIBackgroundColor:
 			case lcInstructionsPropertyType::PLITextColor:
 			case lcInstructionsPropertyType::PLIBorderColor:
+			case lcInstructionsPropertyType::PLIWidth:
+			case lcInstructionsPropertyType::PLIMaxPartWidth:
 			case lcInstructionsPropertyType::Count:
 				break;
 		}
@@ -519,6 +545,8 @@ void lcInstructionsPropertiesWidget::SelectionChanged(QGraphicsItem* FocusItem)
 		AddFontProperty(lcInstructionsPropertyType::PLIFont);
 		AddColorProperty(lcInstructionsPropertyType::PLITextColor);
 		AddColorProperty(lcInstructionsPropertyType::PLIBorderColor);
+		AddIntegerProperty(lcInstructionsPropertyType::PLIWidth, 1, 9999);
+		AddIntegerProperty(lcInstructionsPropertyType::PLIMaxPartWidth, 1, 9999);
 //		PLIBorderWidth,
 //		PLIBorderRound,
 

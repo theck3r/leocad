@@ -144,6 +144,7 @@ protected:
 	void AddBoolProperty(lcInstructionsPropertyType Type);
 	void AddColorProperty(lcInstructionsPropertyType Type);
 	void AddFontProperty(lcInstructionsPropertyType Type);
+	void AddIntegerProperty(lcInstructionsPropertyType Type, int Min, int Max);
 
 	lcCollapsibleWidget* mWidget = nullptr;
 	QGridLayout* mPropertiesLayout = nullptr;
