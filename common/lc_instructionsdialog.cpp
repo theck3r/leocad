@@ -383,7 +383,7 @@ void lcInstructionsPropertiesWidget::AddColorProperty(lcInstructionsPropertyType
 		}
 
 		QColor Color = mInstructions->GetColorProperty(Type, mModel, mStep);
-		Color = QColorDialog::getColor(Color, this, Title);
+		Color = QColorDialog::getColor(Color, this, Title, QColorDialog::ShowAlphaChannel);
 
 		if (Color.isValid())
 		{
